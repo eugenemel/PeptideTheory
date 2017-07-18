@@ -13,7 +13,8 @@ class Peptide:
 
         M=0
         for aa in self.sequence:
-            M += C12MASS[aa]
+            if aa in C12MASS:
+                M += C12MASS[aa]
 
         if self.mods:
             for m in self.mods.values():
@@ -80,10 +81,30 @@ class Peptide:
                             ALLFRAG.append((ion, ion_num, z, int(W), mz))
         return(ALLFRAG)
 
+    def hydrophobicity(self):
+
+        SCALE = { 
+           "A"  :  0.620, "R"  : -2.530,  "N"  : -0.780, "D"  : -0.900, "C"  :  0.290,
+           "Q"  : -0.850, "E"  : -0.740,  "G"  :  0.480, "H"  : -0.400, "I"  :  1.380,
+           "L"  :  1.060, "K"  : -1.500,  "M"  :  0.640, "F"  :  1.190, "P"  :  0.120,
+           "S"  : -0.180, "T"  : -0.050,  "W"  :  0.810, "Y"  :  0.260, "V"  :  1.080
+        }
+
+        SCORE=0
+        for aa in self.sequence:
+            if aa in SCALE:
+                SCORE += SCALE[aa]
+
+        return SCORE
+
+
 def test_peptide_class():
         #p1  = Peptide('CKDALA',modifications={1: "C[160]"})
         p1  = Peptide('CKDALA',modifications={1: "C[160]", "n": "n[230]", 2: "K[357]"})
 
+        print p1.sequence;
+
+        print "HydroPhobictiy=", p1.hydrophobicity()
         print "preMz: ", p1.getMZ(1)
         print "preMz: ", p1.getMZ(2)
         print "preMz: ", p1.getMZ(3)
