@@ -1,3 +1,6 @@
+#PeptideTheory: Theoretical Ion Generation
+#Author: Eugene Melamud / Calico / 2017
+
 mH2O = 1.007825032*2 + 15.99491462
 mNH2 = 1.007825032*2 + 14.00307401
 mNH3 = 1.007825032*3 + 14.00307401

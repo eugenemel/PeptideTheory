@@ -1,3 +1,6 @@
+#PeptideTheory: Theoretical Ion Generation
+#Author: Eugene Melamud / Calico / 2017
+
 from Protein import *
 from Peptide import *
 
