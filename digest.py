@@ -39,7 +39,7 @@ for protein in proteins:
     #
     #complete tryptic digest
     #
-    peptides = protein.digest(pattern="[KR]", minlength=5, maxmiss=3, maxlength=30,missprob=0)
+    peptides = protein.digest(pattern="[KR][^P]", minlength=5, maxmiss=3, maxlength=30,missprob=0)
 
 
     #
@@ -63,6 +63,6 @@ for protein in proteins:
         print protein.id, peptide_sequence, "preMz: ", pep.getMZ(2)
 
         #print theory digest
-        for ion in all_ions: 
-            print "\t", ion
+#        for ion in all_ions: 
+#            print "\t", ion
 
