@@ -28,6 +28,19 @@ class Peptide:
         else:
             return(M + mH2O + mProton)
 
+    def modString(self):
+        modString=""
+        if "n" in self.mods: modString += self.mods["n"]
+
+        for i in range(0, len(self.sequence)):
+            aaNum = i+1
+            if aaNum in self.mods:
+                modString += self.mods[aaNum]
+                i += 1
+            elif self.sequence[i] in C12MASS:
+                modString += self.sequence[i]
+
+        return modString
 
     def all_ions(self, ionseries=['b','y'], frg_z_list=[1,2], fragmentlossgains=[0,], mass_limits=None):
 
@@ -44,7 +57,8 @@ class Peptide:
 
             #split peptide into two segmentes
             aanum  = pos+1
-            aamass = C12MASS[aa]
+            aamass = 0;
+            if aa in C12MASS: aamass = C12MASS[aa]
             if aanum in self.mods: aamass += MODS[ self.mods[aanum] ]
 
             left = left + aamass            #mass of the peptide to the left of break point

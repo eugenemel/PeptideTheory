@@ -2,6 +2,7 @@
 #Author: Eugene Melamud / Calico / 2017
 
 import re
+import gzip
 
 class Spectra:
     def __init__(self):
@@ -17,14 +18,20 @@ class Spectra:
         return len(self.mz)
 
     def info(self):
-        print self.title, "PRE=",self.preMz, "CHARGE=",self.charge, "RT=",self.rt, "NOBS=",len(self.mz), "TIC=", sum(self.intensity)
+        print self.title, "SCAN=", self.scannum,\
+                          "PRE=",  self.preMz,\
+                          "CHARGE=",self.charge, "RT=",self.rt, "NOBS=",len(self.mz), "TIC=", sum(self.intensity)
 
 
 class SpectraReader:
 
     def __init__(self,filename):
         self.filename = filename
-        self.fh = open(filename)
+
+        if filename.endswith(".gz"):
+            self.fh = gzip.open(filename, 'rb')
+        else:
+            self.fh = open(filename)
 
     def nextMGFSpectrum(self):
         if not self.fh: return None
@@ -39,8 +46,11 @@ class SpectraReader:
 
             if line.startswith("TITLE"):
                 s.title = line.split("=",2)[1]
+                scaninfo = s.title.split(".")
+                if len(scaninfo) >= 2: s.scannum=int(scaninfo[1])
             elif line.startswith("PEPMASS"):
-                s.preMz =float(line.split("=",2)[1])
+                values = re.split(r'\s+|=',line)
+                if len(values) >= 1: s.preMz =float(values[1])
             elif line.startswith("RTINSECONDS"):
                 s.rt =float(line.split("=",2)[1])
             elif line.startswith("CHARGE"):
