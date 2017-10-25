@@ -21,25 +21,39 @@ class Peptide:
                 if m in MODS: 
                     M += MODS[m]
                 else:
-                    print "Unknown modification type:", m 
+                    print("Unknown modification type:", m)
 
         if charge >= 1:
             return((M + mH2O + mProton*charge)/charge)
         else:
             return(M + mH2O + mProton)
 
-    def modString(self):
+    def addFixedModifications(self,modtype):
+            if modtype == "TMT":
+                self.mods["n"] = "n[230]"    #TMT n-terminal mod
+                for i in range(0, len(self.sequence)):
+                    if self.sequence[i] == 'K':
+                        self.mods[(i+1)] = "K[357]"
+
+            if modtype == "Iodoacetamide":
+                for i in range(0, len(self.sequence)):
+                    if self.sequence[i] == 'C':
+                        self.mods[i+1] = "C[160]"
+
+    def modString(self,z=None):
         modString=""
         if "n" in self.mods: modString += self.mods["n"]
 
-        for i in range(0, len(self.sequence)):
-            aaNum = i+1
-            if aaNum in self.mods:
-                modString += self.mods[aaNum]
-                i += 1
-            elif self.sequence[i] in C12MASS:
-                modString += self.sequence[i]
+        i=0
+        while i < len(self.sequence):
+            aa = self.sequence[i]
+            if i+1 in self.mods:
+                aa = self.mods[i+1]
+            modString += aa
+            i += 1
 
+        #add charge to the end of the string
+        if z: modString += "/" + str(z)
         return modString
 
     def all_ions(self, ionseries=['b','y'], frg_z_list=[1,2], fragmentlossgains=[0,], mass_limits=None):
@@ -155,14 +169,13 @@ def test_peptide_class():
         #p1  = Peptide('CKDALA',modifications={1: "C[160]", "n": "n[230]", 2: "K[357]"})
         p1  = Peptide("KLKLLLLLKLK")
 
-        print p1.sequence;
-
-        print "HydroPhobictiy=", p1.hydrophobicity()
-        print "KideraFactors=",  p1.kideraFactors()
-        print "preMz: ", p1.getMZ(1)
-        print "preMz: ", p1.getMZ(2)
-        print "preMz: ", p1.getMZ(3)
-        print "preMz: ", p1.getMZ(4)
+        print (p1.sequence)
+        print ("HydroPhobictiy=", p1.hydrophobicity())
+        print ("KideraFactors=",  p1.kideraFactors())
+        print ("preMz: ", p1.getMZ(1))
+        print ("preMz: ", p1.getMZ(2))
+        print ("preMz: ", p1.getMZ(3))
+        print ("preMz: ", p1.getMZ(4))
 
         all_ions = p1.all_ions( ionseries = ['b','y','a'], 
                 frg_z_list = [1,2],

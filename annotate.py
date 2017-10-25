@@ -2,9 +2,9 @@ import sys
 import csv
 import re
 import glob
-from PeptideTheory import SpectraReader
-from PeptideTheory import Peptide
-from PeptideTheory import MolecularWeights
+import SpectraReader
+import Peptide
+import MolecularWeights
 
 ANNOTATION=dict()
 
@@ -26,7 +26,7 @@ def read_specta(spectafile):
                 #print "SKIPPING SCAN=", scan.title, " Has not been annotated."
                 continue
 
-        print "SCAN=", scan.title
+        print("SCAN=", scan.title)
         for annotation in ANNOTATION[scanId]:
             peptide = annotation['peptide']
             peptide = re.sub(r'^\w\.','',peptide)
@@ -52,12 +52,12 @@ def read_specta(spectafile):
             else:
                 #print annotation
                 #print scan
-                print "\tHIT RANK=", annotation["Rank"], "PEPTIDE=",   annotation['peptide'],\
+                print ("\tHIT RANK=", annotation["Rank"], "PEPTIDE=",   annotation['peptide'],\
                                                          "DECOY=",     annotation['label'],\
                                                          "MODS=",     pep.modString(),\
                                                          "deltCn=",  annotation["deltCn"],\
                                                          "Xcorr=",    annotation['Xcorr'],\
-                                                         "massDiff=", delta*scan.charge
+                                                         "massDiff=", delta*scan.charge)
 
                 #print out observed spectra?
                 #for i in range(0,len(scan.mz)): print scan.mz[i], scan.intensity[i]

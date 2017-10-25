@@ -18,10 +18,11 @@ class Spectra:
         return len(self.mz)
 
     def info(self):
-        print self.title, "SCAN=", self.scannum,\
+        print(self.title, "SCAN=", self.scannum,\
                           "PRE=",  self.preMz,\
-                          "CHARGE=",self.charge, "RT=",self.rt, "NOBS=",len(self.mz), "TIC=", sum(self.intensity)
-
+                          "CHARGE=",self.charge,\
+                          "RT=",self.rt,\
+                          "NOBS=",len(self.mz), "TIC=", sum(self.intensity))
 
 class SpectraReader:
 
@@ -67,6 +68,6 @@ def testClass():
     while 1:
         s = reader.nextMGFSpectrum()
         if not s: break
-        print s.preMz, s.charge
+        print(s.preMz, s.charge)
 
 #testClass()
