@@ -37,11 +37,14 @@ class Protein:
             raise "Unknown enzyme"
 
 
-    def digest(self,pattern="[RK]",cutoffset=1,minlength=3,maxlength=-1,maxmiss=-1, missprob=0.0):
+    def digest(self,pattern="[RK]",cutoffset=1,minlength=3,maxlength=-1,maxmiss=-1, missprob=0.0, reverse=False):
+
+        protein_sequence = self.sequence
+        if reverse: protein_sequence = self.sequence[::-1]
 
         #get cut locations
         positions = []
-        itr = re.finditer(pattern, self.sequence, flags=0)
+        itr = re.finditer(pattern, protein_sequence, flags=0)
         for m in itr:
             positions.append(m.start())
 
@@ -53,7 +56,7 @@ class Protein:
 
         #always include ends of the sequene
         positions.insert(0,0)
-        positions.append(len(self.sequence))
+        positions.append(len(protein_sequence))
 
         #print positions
 
@@ -68,7 +71,7 @@ class Protein:
 
             for b in range(a+1, brange):
                 if a>0: inside_cut=1
-                peptide = self.sequence[ positions[a]+inside_cut : positions[b]+cutoffset ]
+                peptide = protein_sequence[ positions[a]+inside_cut : positions[b]+cutoffset ]
                 #print a,b, peptide #debug
 
                 if maxlength > 0 and len(peptide) > maxlength: continue

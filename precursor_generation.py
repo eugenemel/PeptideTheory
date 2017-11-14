@@ -22,6 +22,7 @@ def readFastaFile(filename):
                 proteins.append(Protein(seq_id,seq_desc,seq))
                 seq=""
             seq_id, seq_desc = line.split(" ",1)
+            seq_id = seq_id[1:]
         else:
             seq += line.replace(" ","").upper()
 
@@ -35,6 +36,7 @@ if __name__ == "__main__":
     parser.add_option('-i', '--input', dest = 'inputfile')
     parser.add_option('--tmt', action="store_true", dest = 'tmt')
     parser.add_option('--iod', action="store_true", dest = 'iod', default=True)
+    parser.add_option('--reverse', action="store_true", dest = 'reverse', default=False)
     parser.add_option('--noiod', action="store_false", dest = 'iod')
     parser.add_option('--oxy',   action="store_true", dest = 'oxy', default=True)
     parser.add_option('--nooxy',   action="store_false", dest = 'oxy')
@@ -56,7 +58,11 @@ if __name__ == "__main__":
     for protein in proteins:
 
         #complete tryptic digest
-        peptides = protein.digest(pattern=opts.pattern, minlength=opts.minlength, maxmiss=3, maxlength=opts.maxlength,missprob=0)
+        peptides = protein.digest(pattern=opts.pattern, minlength=opts.minlength, maxmiss=3, maxlength=opts.maxlength,missprob=0,reverse=opts.reverse)
+
+        #name of the protein
+        proteinId = protein.id
+        if opts.reverse: proteinId = "DECOY_" + proteinId
 
         for peptide_sequence in peptides:
             for z in xrange(opts.minz,opts.maxz):
@@ -65,7 +71,7 @@ if __name__ == "__main__":
                 #fixed mods
                 if opts.tmt: p.addFixedModifications("TMT")
                 if opts.iod:  p.addFixedModifications("Iodoacetamide")
-                print(p.modString(z))
+                print("{}\t{}\t{}".format(p.modString(z),proteinId,p.getMZ(z)))
                 
                 if opts.oxy: 
                     #varible oxidataion
@@ -75,4 +81,4 @@ if __name__ == "__main__":
 
                     for pos in oxidations:
                         p.mods[pos] = "M[147]"
-                        print(p.modString(z))
+                        print("{}\t{}\t{}".format(p.modString(z),proteinId,p.getMZ(z)))
