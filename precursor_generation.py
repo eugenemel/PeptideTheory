@@ -46,6 +46,7 @@ if __name__ == "__main__":
     parser.add_option('--maxlen', type="int", dest='maxlength', default = 30)
     parser.add_option('--maxmiss',type="int", dest='maxmiss', default = 3)
     parser.add_option('--pattern', type="string", dest='pattern', default = "[KR]")
+    parser.add_option('--semiTryptic', action="store_true", dest = 'semiTryptic', default=False)
 
     (opts, args) = parser.parse_args()
 
@@ -58,7 +59,7 @@ if __name__ == "__main__":
     for protein in proteins:
 
         #complete tryptic digest
-        peptides = protein.digest(pattern=opts.pattern, minlength=opts.minlength, maxmiss=3, maxlength=opts.maxlength,missprob=0,reverse=opts.reverse)
+        peptides = protein.digest(pattern=opts.pattern, minlength=opts.minlength, maxmiss=3, maxlength=opts.maxlength,missprob=0,semiTryptic=opts.semiTryptic,reverse=opts.reverse)
 
         #name of the protein
         proteinId = protein.id

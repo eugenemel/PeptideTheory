@@ -37,7 +37,7 @@ class Protein:
             raise "Unknown enzyme"
 
 
-    def digest(self,pattern="[RK]",cutoffset=1,minlength=3,maxlength=-1,maxmiss=-1, missprob=0.0, reverse=False):
+    def digest(self,pattern="[RK]",cutoffset=1,minlength=3,maxlength=-1,maxmiss=-1, missprob=0.0, semiTryptic=False, reverse=False):
 
         protein_sequence = self.sequence
         if reverse: protein_sequence = self.sequence[::-1]
@@ -72,12 +72,20 @@ class Protein:
             for b in range(a+1, brange):
                 if a>0: inside_cut=1
                 peptide = protein_sequence[ positions[a]+inside_cut : positions[b]+cutoffset ]
-                #print a,b, peptide #debug
+                #print positions[a], positions[b], peptide #debug
 
                 if maxlength > 0 and len(peptide) > maxlength: continue
                 if len(peptide) <= minlength: continue
-
                 peptides.append(peptide)
+
+                #semi tryptic digest
+                if semiTryptic:
+                    for c in range(positions[a]+inside_cut+1,  positions[b]):
+                        peptide = protein_sequence[ c : positions[b]+cutoffset ]
+                        #print "\t", c, positions[b], peptide #debug
+                        if maxlength > 0 and len(peptide) > maxlength: continue
+                        if len(peptide) <= minlength: continue
+                        peptides.append(peptide)
 
         return(peptides)
 
